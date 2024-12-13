@@ -1,0 +1,382 @@
+= Un jeu de carte chinois très populaire
+
+== Identité
+Complétez les informations ci-dessous.
+
+_Abi, Mohamed, 22408077, 50, username:uvsq22408077 password :Medmedmed2024
+
+Noumi, Mehdi, uvsq22404628, 25,username:uvsq22404628 password : nucdoV-jobgar-cogqo2
+
+_GIT url_ : https://github.com/ensYeh/miniprjjeucarte-nc50-group3
+
+== Sujet
+L'objet de ce mini-projet est de développer le jeu de carte Zheng Shangyou (争上游)  qui doit fonctionner en mode ligne de commande.
+La règle du jeu est disponible ici http://persee.prism.uvsq.fr/pub/cp/prj/ZhengShangyou.html[ZhengShangyou].
+
+Vous devrez respecter les contraintes techniques et fonctionnelles mentionnées ci-dessous.
+L'usage de bibliothèques tierces est autorisé.
+Ce qui n'est pas imposé par le sujet est laissé à votre libre interprétation.
+
+=== Contraintes techniques
+* Ce mini-projet est à réaliser en Java par groupe de 2 étudiants.
+  - les 2 étudiants doivent coopérer à travers un même git (celui créé par _github classroom_).
+  Les contributions des participants (_commits_) doivent être équilibrées.
+* Il devra comporter une documentation dans ce fichier (cf. ci-dessous).
+  - La documentation devra décrire l'usage de l'application (_manuel utilisateur_) ainsi que la conception du jeu (_manuel technique_).
+* Vous utiliserez `git` en effectuant des commits réguliers comportant des messages informatifs.
+L'usage des branches est également exigé, attestant ainsi de votre collaboration au sein du groupe.
+* La version de Java à utiliser est la https://adoptium.net/[version 17] (ou plus récente).
+* Le _build_ sera assuré par _Maven_ et plus précisément _Maven wrapper_ (déjà intégré dans le projet).
+Aucune manipulation en dehors de Maven ne devra être nécessaire pour la compilation.
+* Le projet devra respecter les règles de codage Google (vérification par `checkstyle` déjà intégré dans le projet).
+* Des tests unitaires https://junit.org/junit5/docs/current/user-guide/[JUnit 5] devront être disponibles pour une part significative des méthodes développées.
+* Un outil de https://fr.wikipedia.org/wiki/Couverture_de_code[_Code Coverage_] devra être intégré au _build_
+* Les fonctionnalités du langage Java devront être utilisées au mieux (POO, exceptions, librairie de collections, I/O, …).
+* L'application devra pouvoir être exécutée à partir d'un `jar` incluant toutes les dépendances.
+* L'application fonctionnera dans un terminal (pas d'interface graphique).
+
+=== Description fonctionnelle
+L'application doit permettre de jouer de 2 à 4 joueurs, i.e. contre un à trois adversaires virtuels dénommés _Joueurs Virtuels_ (**JV**).
+Chaque JV joue grace à un _Moteur de Jeu_ (**MJ**) modélisé par une classe de votre programme.
+Un MJ peut jouer comme un enfant qui applique une stratégie basique, ou bien jouer à l'aide de stratégies plus sophistiquées.
+Bien entendu, l'application doit gérer l'enchaînement des manches{empty}footnote:[Une manche se termine quand il ne reste des cartes qu'à un seul joueur (cf. la règle du jeu).] et les décomptes des points jusqu'à la fin du jeu{empty}footnote:[Le jeu se termine lorsqu'un joueur atteint ou dépasse un certain nombre de points (500 en général).].
+
+==== Interface de l'application
+* visualisera les actions de chaque joueur par des messages textuels clairs.
+* Par exemple, une action peut être _"je mets 3 rois suivis de 2 cartes de valeur 8"_.  
+* doit afficher chaque joueur et ses messages dans une couleur distincte.
+* doit vérifier si la phrase exprimée par le joueur non JV est correcte et si sa proposition est valide en répondant de __manière très polie__. Exemple: "désolé XXX, mais vous n'avez qu'un roi"
+* doit afficher le nombre de cartes de chaque JV, mais pas ses valeurs de carte.
+* doit afficher vos cartes (celles du joueur non JV), de manière ordonnées du plus fort au plus faible suivant l'ordre décrit ci-dessous.
+* doit pour toutes les actions effectuées par l'application afficher un message clair.
+* Par exemple, s'il y a un mélange des cartes, un messages du type _"je viens de …."_ sera affiché.
+* choix du nombre de points déclenchant la fin du jeu
+
+=== Contraintes à respecter
+* Dans ce jeu, un joueur peu décider d'abandonner s'il juge qu'il n'a aucune chance de gagner.
+  C'est un événement rare (surtout chez les JV), mais possible.
+* On mémorisera l'historique d'une partie dans une collection stockée dans un fichier.
+  - il sera donc possible de rejouer une partie ou d'afficher le déroulé d'une partie
+* Une interface spécifique pourra être proposée pour une aide ou pour voir le nombre de parties gagnées par chaque joueur.
+* Vous devez implementer un Moteur de Jeu **MJ** qui joue comme un enfant.
+  - L'enfant se débarrasse de ses cartes au fur et à mesure sans aucun assemblage de ses cartes.
+    Par exemple, il ne va pas decider de faire une suite de 6 cartes, sachant que cela nécessite de briser des couples ou trio de cartes de même valeur.
+* Vous devez également implémenter au moins un MJ qui joue de manière plus sophistiquée.
+  - Par exemple, je peux jouer 1, 2 ou 3 cartes identiques, mais si j'ai 3 cartes identiques, je peux aussi decider de les jouer une par une, ou bien d'en jouer une suivie de deux.
+  - Il existe de nombreuses autres stratégies.
+    Ces stratégies dépendent des cartes en main.
+    La problématique est de décider comment assembler vos cartes pour optimiser vos chances de pouvoir vous en débarrasser le plus rapidement possible.
+  - Notez que plus les cartes sont faibles, plus il est difficile de s'en débarrasser.
+  - Au delà de deux MJ et s'ils sont _vraiment différents_ et que vous l'expliquez dans le rapport, vous aurez des points bonus
+* Une interface spécifique pourra être proposée pour "espionner" un joueur.
+  En d'autres termes, il est possible d'afficher les sorties d'un MJ et voir ses cartes pour comprendre sa décision.
+  Cela peut être le log d'un MJ qui affiche chacune de ses décisions.
+* Si vous avez `m` MJ et `v` JV, le JV[i] i in (0..v-1) est piloté par le MJ[i modulo m].
+  Chaque joueur virtuel est donc associé à un `MJ` différent.
+
+== Extensions optionnelles
+* Variantes (https://boardgamegeek.com/boardgame/215/tichu)
+* plus de 2 MJ
+
+== Références
+
+**Attention**: il existe plusieurs variantes, mais celui de reference est dans le premier lien avec les contraintes ci-dessus.
+
+* Description du jeu:
+  - https://boardgamegeek.com/boardgame/70451/zheng-fen
+  - https://chrisenvadrouille.wordpress.com/2013/07/05/jour-46-les-regles-dun-jeu-de-cartes-chinois/
+  - https://www.pagat.com/climbing/doudizhu.html
+
+
+* https://github.com/lyudaio/jcards
+
+* Quelques bibliothèques :
+http://fusesource.github.io/jansi/[JAnsi] (couleur dans un terminal),
+https://github.com/jline/jline3[JLine] (gestion des saisies)
+
+=== Manuel utilisateur
+# Projet Zhengyao
+
+## Description du projet
+
+Le projet Zhengyao est un jeu de cartes basé sur des règles définies et la gestion de joueurs (humains et virtuels). Les joueurs peuvent jouer des cartes selon des règles spécifiques, avec des mécanismes de gestion de combinaisons et de stratégies. Le jeu est conçu pour être extensible et adaptable.
+
+---
+
+## Prérequis
+
+Avant de pouvoir exécuter ou développer ce projet, assurez-vous d’avoir les outils suivants installés :
+
+- **Java** : version 17 ou supérieure
+- **Maven** : pour gérer les dépendances et le cycle de vie du projet
+
+---
+
+## Installation
+
+### Cloner le dépôt Git
+Clonez le projet sur votre machine locale avec la commande suivante :
+
+```bash
+git clone https://github.com/ensYeh/miniprjjeucarte-nc50-group3
+```
+
+### Accéder au répertoire du projet
+Allez dans le répertoire du projet :
+
+```bash
+cd zhengyao
+```
+
+### Construire le projet avec Maven
+Utilisez Maven pour construire le projet et résoudre les dépendances :
+
+```bash
+mvn clean install
+mvn package
+# ou
+mvn package -Dcheckstyle.skip=true
+```
+
+---
+
+## Exécution du projet
+
+Une fois le projet construit, exécutez l’application avec la commande suivante :
+
+```bash
+java -jar target/zhengyao-1.0-SNAPSHOT.jar
+```
+
+---
+
+## Bibliothèques utilisées
+
+Le projet utilise plusieurs bibliothèques et outils pour faciliter le développement et les tests :
+
+- **JUnit 5** : pour les tests unitaires
+- **Mockito** : pour simuler les comportements des objets dans les tests unitaires
+- **Jansi** : pour gérer les couleurs dans la sortie terminal
+- **JLine** : pour une interface améliorée pour les commandes utilisateur
+
+---
+
+## Couverture de code
+
+Le projet utilise **JaCoCo** pour mesurer la couverture de code.
+
+### Consulter le rapport de couverture de code
+
+1. Exécutez les tests unitaires avec Maven :
+
+    ```bash
+    mvn test ou depuis jar :java -jar target/zhengyao-1.0-SNAPSHOT.jar
+    ```
+
+
+---
+
+## Système d’historique
+
+Le projet inclut un système d’historique pour suivre et gérer les actions des joueurs pendant une partie.
+
+### Fonctionnalités principales
+- Enregistrement automatique des actions effectuées.
+
+### Activer et utiliser l’historique
+1. Activer le mode historique dans les paramètres de jeu .
+2. Utiliser les commandes spécifiques pour naviguer dans l’historique, par exemple :
+======= GAME HISTORY INTERFACE =======
+1. View all game histories
+2. View total wins per player
+3. View specific game history
+4. Exit
+  
+
+---
+
+## Rôle des principales classes
+
+### Résumé des classes principales
+
+- **`Joueur`** : représente un joueur humain ou virtuel. Contient les cartes et gère les actions du joueur (jouer une carte, passer un tour, etc.).
+- **`Carte`** : représente une carte du jeu avec un rang et une couleur.
+- **`VerificateurCombinaison`** : vérifie les combinaisons de cartes selon les règles.
+- **`ConditionsDeFin`** : définit les conditions de fin de partie (ex. : nombre de tours restants, victoire).
+- **`ControleDeJeux`** : la classe principale qui exécute le jeu et gère les interactions entre les joueurs.
+- **`GameHistory`** : gère les actions enregistrées et leur restauration via le système d’historique.
+
+### Exemple de fonctionnement : gestion d’une commande utilisateur
+
+1. **Saisie de la commande** : le joueur entre une commande via le terminal.
+2. **Vérification** : le programme valide la commande selon les règles du jeu.
+3. **Exécution** : si la commande est valide, elle est exécutée ; sinon, un message élégant d’erreur est affiché.
+
+---
+
+
+### Technique utilisée pour l’assemblage des cartes par les joueurs virtuels
+1. Les joueurs virtuels analysent leurs cartes disponibles.
+2. Ils identifient toutes les combinaisons possibles (par exemple, une paire, une suite, etc.).
+3. Ils choisissent la combinaison la plus forte possible en fonction des cartes déjà jouées et des règles du jeu.
+
+
+
+
+---
+
+## Conclusion
+
+Le projet Zhengyao permet de jouer à un jeu de cartes en ligne de commande avec des règles spécifiques et la gestion de joueurs humains et virtuels. Avec sa structure extensible, ses fonctionnalités testées et son nouveau système d’historique, il est prêt à accueillir de nombreuses améliorations. N’hésitez pas à contribuer pour enrichir ce jeu et offrir une expérience encore plus captivante !
+=== Manuel technique
+==== Compiler le projet
+.Sous Linux
+----
+$ JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64/ ./mvnw package
+----
+
+.Sous Windows
+----
+> mvnw.cmd package
+----
+
+=== Exécuter l'application
+----
+$ java -jar target/zhangyao-1.0.jar
+----
+
+> À compléter :
+> Comment consulter le rapport de couverture de code par les tests ?
+> Quelles bibliothèques ont été utilisées et pourquoi ?
+> Quel est le rôle des différentes classes ?
+> Quels traitements sont réalisés pour gérer une commande saisie par l'utilisateur ? Donnez un exemple.
+> Quelles améliorations peut-on envisager ?
+
+
+
+# Projet Zhengyao
+
+## Description du projet
+
+Le projet Zhengyao est un jeu de cartes basé sur des règles définies et la gestion de joueurs (humains et virtuels). Les joueurs peuvent jouer des cartes selon des règles spécifiques, avec des mécanismes de gestion de combinaisons et de stratégies.
+
+---
+
+## Prérequis
+
+Avant de pouvoir exécuter ou développer ce projet, assurez-vous d’avoir les outils suivants installés :
+
+- **Java** : version 17 ou supérieure
+- **Maven** : pour gérer les dépendances et le cycle de vie du projet
+
+---
+
+## Installation
+
+### Cloner le dépôt Git
+Clonez le projet sur votre machine locale avec la commande suivante :
+
+```bash
+git clone https://github.com/ensYeh/miniprjjeucarte-nc50-group3
+```
+
+### Accéder au répertoire du projet
+Allez dans le répertoire du projet :
+
+```bash
+cd zhengyao
+```
+
+### Construire le projet avec Maven
+Utilisez Maven pour construire le projet et résoudre les dépendances :
+
+```bash
+mvn clean install
+mvn package
+# ou
+mvn package -Dcheckstyle.skip=true
+```
+
+---
+
+## Exécution du projet
+
+Une fois le projet construit, exécutez l’application avec la commande suivante :
+
+```bash
+java -jar target/zhengyao-1.0-SNAPSHOT.jar
+```
+
+---
+
+## Bibliothèques utilisées
+
+Le projet utilise plusieurs bibliothèques et outils pour faciliter le développement et les tests :
+
+- **JUnit 5** : pour les tests unitaires
+- **Mockito** : pour simuler les comportements des objets dans les tests unitaires
+- **Jansi** : pour gérer les couleurs dans la sortie terminal
+- **JLine** : pour une interface améliorée pour les commandes utilisateur
+
+---
+
+## Couverture de code
+
+Le projet utilise **JaCoCo** pour mesurer la couverture de code.
+
+### Consulter le rapport de couverture de code
+
+1. Exécutez les tests unitaires avec Maven :
+
+    ```bash
+    mvn test
+    ```
+
+2. Une fois les tests terminés, ouvrez le fichier `index.html` généré dans un navigateur pour consulter le rapport détaillé.
+
+---
+
+## Rôle des principales classes
+
+### Résumé des classes principales
+
+- **`Joueur`** : représente un joueur humain ou virtuel. Contient les cartes et gère les actions du joueur (jouer une carte, passer un tour, etc.).
+- **`Carte`** : représente une carte du jeu avec un rang et une couleur.
+- **`VerificateurCombinaison`** : vérifie les combinaisons de cartes selon les règles.
+- **`ConditionsDeFin`** : définit les conditions de fin de partie (ex. : nombre de tours restants, victoire).
+- **`Main`** : la classe principale qui exécute le jeu et gère les interactions entre les joueurs.
+
+### Exemple de fonctionnement : gestion d’une commande utilisateur
+
+1. **Saisie de la commande** : le joueur entre une commande via le terminal.
+2. **Vérification** : le programme valide la commande selon les règles du jeu.
+3. **Exécution** : si la commande est valide, elle est exécutée ; sinon, un message d’erreur est affiché.
+
+---
+
+## Améliorations possibles
+
+- **Interface graphique (GUI)** : ajouter une interface graphique pour une meilleure expérience utilisateur.
+- **IA avancée pour les joueurs virtuels** : implémenter des algorithmes plus sophistiqués pour une stratégie optimisée.
+- **Règles supplémentaires** : ajouter des variantes ou des règles avancées pour enrichir le jeu.
+
+---
+
+## Gestion des utilisateurs et des joueurs virtuels
+
+- **Joueurs humains** : interagissent via l’interface en ligne de commande.
+- **Joueurs virtuels** : utilisent une logique interne pour jouer leurs cartes en fonction des règles et des cartes disponibles.
+
+### Assemblage des cartes par les joueurs virtuels
+
+Les joueurs virtuels :
+
+1. Analyzent les cartes disponibles.
+2. Cherchent à jouer la combinaison la plus forte possible.
+
+---
+
+## Conclusion
+
+Le projet Zhengyao permet de jouer à un jeu de cartes en ligne de commande avec des règles spécifiques et la gestion de joueurs humains et virtuels. Le code est extensible et testé avec des outils comme **JUnit** pour garantir sa fiabilité.
+
